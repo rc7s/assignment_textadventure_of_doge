@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
+
 public class game : MonoBehaviour {
 
 	public string currentLoc;
@@ -56,6 +57,8 @@ public class game : MonoBehaviour {
 	private bool a13destroyed;
 	private bool evildestroyed;
 
+	//audio
+
 	// Use this for initialization
 	void Start () {
 		screen = "The Adventure of Sweet Doge.\n\npress spacebar to play";
@@ -65,6 +68,12 @@ public class game : MonoBehaviour {
 		south = "nil";
 		east = "nil";
 		west = "nil";
+
+		// var aSources = GetComponents(AudioSource);
+		// dog = aSources[0];
+		// found = aSources[1];
+		// step = aSources[2];
+		// dying = aSources[3];
 		
 		//rooms
 		a0 = "nil";
@@ -429,6 +438,7 @@ public class game : MonoBehaviour {
 	void Dig () {
 		if(Input.GetKeyDown(KeyCode.D) && (!newspaper || (delivered && !bone))){
 			justDug = true;
+			GetComponent<AudioSource>().Play();
 		}
 		if(!delivered && Input.GetKeyDown(KeyCode.D) && newspaperLoc == currentLoc && !dead){
 			newspaper = true;
