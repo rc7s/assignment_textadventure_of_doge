@@ -362,7 +362,13 @@ public class game : MonoBehaviour {
 				east = "nil";
 				west = "nil";
 
-				newspaperLoc = a4;
+				string[] spawns = {a1,a2,a3,a4,a5,a6,a7,a8};
+			
+				int newsNum = Random.Range(0,8);
+				int boneNum = Random.Range(0,8);
+
+				newspaperLoc = spawns[newsNum];
+				boneLoc = spawns[boneNum];
 
 				a11first = true;
 				a11second = false;
