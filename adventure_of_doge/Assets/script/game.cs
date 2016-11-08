@@ -9,6 +9,7 @@ public class game : MonoBehaviour {
 	private bool gameStart;
 	public bool newspaper;
 	public string newspaperLoc;
+	public string boneLoc;
 
 	public string north;
 	public string south;
@@ -42,9 +43,22 @@ public class game : MonoBehaviour {
 	//dead?
 	private bool dead;
 
+	//dug
+	private bool justDug;
+	
+	//delivered
+	private bool delivered;
+	private bool bone;
+
+	//evil destroyed
+	private bool a11destroyed;
+	private bool a12destroyed;
+	private bool a13destroyed;
+	private bool evildestroyed;
+
 	// Use this for initialization
 	void Start () {
-		screen = "the adventure of sweet newspaper-doge.\n\npress spacebar to play";
+		screen = "The Adventure of Sweet Doge.\n\npress spacebar to play";
 		gameStart = false;
 		newspaper = false;
 		north = "nil";
@@ -54,21 +68,22 @@ public class game : MonoBehaviour {
 		
 		//rooms
 		a0 = "nil";
-		a1 = "ball pit";
-		a2 = "bird nest";
-		a3 = "familiar road";
-		a4 = "pile of bones";
+		a1 = "Ball Pit";
+		a2 = "Bird's Nest";
+		a3 = "a familiar road";
+		a4 = "a pile of bones";
 		a5 = "smelly place";
-		a6 = "playground";
-		a7 = "lumby castle";
-		a8 = "lonely tree";
-		a9 = "doge house";
-		a10 = "winning place";
-		a11 = "angry Diego's mansion";
+		a6 = "Playground";
+		a7 = "Lumby Castle";
+		a8 = "a lonely tree";
+		a9 = "the Doge House";
+		a10 = "the Wise Old Man's house";
+		a11 = "Angry Diego's mansion";
 		a12 = "Spooky Skeleton Swamp";
 		a13 = "Unlucky Wizard Daniel";
 
 		newspaperLoc = a4;
+		boneLoc = a7;
 
 		a11first = true;
 		a11second = false;
@@ -77,6 +92,18 @@ public class game : MonoBehaviour {
 		a13first = true;
 		a13second = false;
 		dead = false;
+
+		justDug = false;
+
+		delivered = false;
+
+		a11destroyed = false;
+		a12destroyed = false;
+		a13destroyed = false;
+
+		evildestroyed = false;
+
+
 
 	}
 	
@@ -184,28 +211,54 @@ public class game : MonoBehaviour {
 
 		if (currentLoc == a10){
 			screen = "You are now at "+currentLoc;
+			if(newspaper){
+				screen = "You return to the Wise Old Man's house. The Wise Old Man finds that you have the magic newspaper. He finds you worthy and asks that you destroy all evil in the land. Search for the Bone of Light and fulfill your duty!";
+				delivered = true;
+				if(Input.GetKeyDown(KeyCode.LeftArrow)){
+					newspaper = false;
+				}
+			}
+			if(!newspaper && !delivered){
+				screen += "\n\nWise Old Man: 'Oh sweet doge, come visit me when you have found something...'";
+			}
+			if(delivered && !newspaper && !bone){
+				screen += "\n\nWise Old Man: 'Oh sweet doge, go on and find the Bone of Light. You must destroy all evil. Please.'";
+			}
+			if(delivered && !newspaper && bone && !evildestroyed){
+				screen += "\n\nWise Old Man: 'Oh sweet doge, you found the Bone of Light. You know what you must do now.'";
+			}
+			if(evildestroyed){
+				screen = "You return to the Wise Old Man's house... but he is missing at this moment.\n\nWhat's also missing is the rest of this 'story.' The man must have fled with it!";
+			}
 			Move();
 			north = a0;
 			south = a0;
 			east = a0;
 			west = a3;
 			Dig();
-			if(newspaper){
-				screen = "The wise old man finds that you have the magic newspaper. He finds you worthy and asks that you destroy all evil in the land. Search for the Bone of Light and fulfill your duty!";
-			}
 		}
 
 		if (currentLoc == a11){
 			screen = "You are now at "+currentLoc;
+			if(!bone){
 			if(a11first){
-				screen += "\n\nDiego: 'Away! You filthy dog! Do not return!'";
+				screen += "\n\nDiego: 'Away! You filthy doge! Do not return!'";
 				if(Input.GetKeyDown(KeyCode.DownArrow)){
 				a11first = false;
 				}
 			}
 			if(a11second && !a11first){
-				screen += "\n\nDiego: 'How dare you come back!? This is the end of you!' -- YOU DIED";
+				screen += "\n\nDiego: 'How dare you come back!? This is the end of you, foolish doge!' -- YOU DIED";
 				dead = true;
+			}}
+			if(bone && !a11destroyed){
+				screen += "\n\nDiego: 'The bone.. No! This can't be happening!'";
+				if(Input.GetKeyDown(KeyCode.E)){
+					a11destroyed = true;
+				}
+			}
+			if(a11destroyed){
+				screen += "\n\nYou use the Bone of Light and silence Diego.";
 			}
 			Move();
 			north = a0;
@@ -217,6 +270,7 @@ public class game : MonoBehaviour {
 
 		if (currentLoc == a12){
 			screen = "You are now at "+currentLoc;
+			if(!bone){
 			if(a12first){
 				screen += "\n\nYou attract the attention of spooky skeletons. Beware...";
 				if(Input.GetKeyDown(KeyCode.RightArrow)){
@@ -226,6 +280,15 @@ public class game : MonoBehaviour {
 			if(a12second && !a12first){
 				screen += "\n\nSpooky skeletons maul you now. YOU DIED";
 				dead = true;
+			}}
+			if(bone && !a12destroyed){
+				screen += "\n\nThe skeletons sense the Bone's presence and kneel before you.";
+				if(Input.GetKeyDown(KeyCode.E)){
+					a12destroyed = true;
+				}
+			}
+			if(a12destroyed){
+				screen += "\n\nThe skeletons crumble.";
 			}
 			Move();
 			north = a0;
@@ -237,8 +300,9 @@ public class game : MonoBehaviour {
 
 		if (currentLoc == a13){
 			screen = "You are now at "+currentLoc;
+			if(!bone){
 			if(a13first){
-				screen += "\n\nDaniel: 'Wha- What are you doing here, little dog? Please leave me alone...'";
+				screen += "\n\nDaniel: 'Wha- What are you doing here, little doge? Please leave me alone...'";
 				if(Input.GetKeyDown(KeyCode.UpArrow)){
 				a13first = false;
 				}
@@ -246,6 +310,15 @@ public class game : MonoBehaviour {
 			if(a13second && !a13first){
 				screen += "\n\nDaniel: 'Unlucky...' -- YOU DIED";
 				dead = true;
+			}}
+			if(bone && !a13destroyed){
+				screen += "\n\nDaniel: 'The bone.. How can I be THIS unlucky!?!'";
+				if(Input.GetKeyDown(KeyCode.E)){
+					a13destroyed = true;
+				}
+			}
+			if(a13destroyed){
+				screen += "\n\nDaniel disintegrates...";
 			}
 			Move();
 			north = a5;
@@ -267,11 +340,15 @@ public class game : MonoBehaviour {
 			a13second = true;
 		}
 
+		if(bone){
+			screen += "\n\nPress E to use the Bone of Light!";
+		}
+
 		if(dead){
 			screen += "\n\nGAME OVER. Press F to restart.";
 			if(Input.GetKeyDown(KeyCode.F)){
 				currentLoc = "nil";
-				screen = "the adventure of sweet newspaper-doge.\n\npress spacebar to play";
+				screen = "The Adventure of Sweet Doge.\n\npress spacebar to play";
 				gameStart = false;
 				newspaper = false;
 				north = "nil";
@@ -288,8 +365,20 @@ public class game : MonoBehaviour {
 				a13first = true;
 				a13second = false;
 				dead = false;
+				justDug = false;
+				delivered = false;
+				bone = false;
+
+				a11destroyed = false;
+				a12destroyed = false;
+				a13destroyed = false;
+				evildestroyed = false;
 
 			}
+		}
+
+		if(a11destroyed && a12destroyed && a13destroyed){
+			evildestroyed = true;
 		}
 
 		
@@ -326,12 +415,54 @@ public class game : MonoBehaviour {
 	}
 
 	void Dig () {
-		if(!dead){
+		if(Input.GetKeyDown(KeyCode.D) && (!newspaper || (delivered && !bone))){
+			justDug = true;
+		}
+		if(!delivered && Input.GetKeyDown(KeyCode.D) && newspaperLoc == currentLoc && !dead){
+			newspaper = true;
+		}
+		if(!delivered && newspaper && justDug && newspaperLoc == currentLoc){
+			screen += "\n\nYou dig up a magical newspaper! Where should the newspaper be delivered to?";
+			if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
+				justDug = false;
+			}
+		}
+		if(!newspaper && justDug && !bone){
+			if(currentLoc != a10){
+				screen += "\n\nYou dig but find nothing here";
+			}
+			if(currentLoc == a10){
+				screen += "\n\nWise Old Man: Oi! You can't dig here!!!";
+			}
+			if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
+				justDug = false;
+			}
+		}
+		if(newspaper && !dead && !delivered){
+			screen += "\n\nObjective: Deliver the magic newspaper.";
+		}
+		if(!dead && !justDug && !bone && !newspaper){
 		screen += "\n\nPress D to dig";
 		}
-		if(Input.GetKeyDown(KeyCode.D) && newspaperLoc == currentLoc && !dead){
-			newspaper = true;
-			
+
+		if(Input.GetKeyDown(KeyCode.D) && boneLoc == currentLoc && !dead && delivered){
+			bone = true;
+		}
+
+		if(delivered && !dead && !bone){
+			screen += "\n\nObjective: Find the Bone of Light";
+		}
+		if(delivered && bone && justDug && boneLoc == currentLoc){
+			screen += "\n\nYou dig up the Bone of Light. Now destroy all evil!";
+			if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
+				justDug = false;
+			}
+		}
+		if(delivered && bone && !evildestroyed){
+			screen += "\n\nObjective: Destroy all evil";
+		}
+		if(delivered && bone && evildestroyed && currentLoc != a10){
+			screen += "\n\nObjective: Return to the Wise Old Man";
 		}
 	}
 
