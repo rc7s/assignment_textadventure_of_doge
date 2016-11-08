@@ -82,8 +82,14 @@ public class game : MonoBehaviour {
 		a12 = "Spooky Skeleton Swamp";
 		a13 = "Unlucky Wizard Daniel";
 
-		newspaperLoc = a4;
-		boneLoc = a7;
+		//random spawns
+		string[] spawns = {a1,a2,a3,a4,a5,a6,a7,a8};
+	
+		int newsNum = Random.Range(0,8);
+		int boneNum = Random.Range(0,8);
+
+		newspaperLoc = spawns[newsNum];
+		boneLoc = spawns[boneNum];
 
 		a11first = true;
 		a11second = false;
